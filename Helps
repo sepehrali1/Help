@@ -1,0 +1,349 @@
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "reza_29549"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local BLACK = Color3.fromRGB(15, 15, 18)
+local BLUE = Color3.fromRGB(35, 120, 255)
+local YELLOW = Color3.fromRGB(255, 210, 40)
+local GREEN = Color3.fromRGB(45, 200, 90)
+local WHITE = Color3.fromRGB(255, 255, 255)
+
+-- منوی اصلی
+local main = Instance.new("Frame")
+main.Size = UDim2.fromOffset(350, 560)
+main.Position = UDim2.new(0.5, -175, 0.5, -280)
+main.BackgroundColor3 = BLACK
+main.Parent = gui
+
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 14)
+
+-- عنوان
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 55)
+title.Position = UDim2.fromOffset(10, 5)
+title.BackgroundTransparency = 1
+title.Text = "reza_29549"
+title.TextSize = 25
+title.Font = Enum.Font.GothamBold
+title.TextColor3 = WHITE
+title.Parent = main
+
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new({
+ ColorSequenceKeypoint.new(0, YELLOW),
+ ColorSequenceKeypoint.new(0.5, BLUE),
+ ColorSequenceKeypoint.new(1, GREEN)
+})
+gradient.Parent = title
+
+-- دکمه بستن
+local close = Instance.new("TextButton")
+close.Size = UDim2.fromOffset(42, 42)
+close.Position = UDim2.new(1, -52, 0, 10)
+close.Text = "×"
+close.TextSize = 25
+close.TextColor3 = WHITE
+close.BackgroundColor3 = BLUE
+close.Parent = main
+
+Instance.new("UICorner", close).CornerRadius = UDim.new(0, 9)
+
+-- دکمه باز کردن
+local open = Instance.new("TextButton")
+open.Size = UDim2.fromOffset(65, 45)
+open.Position = UDim2.fromOffset(12, 12)
+open.Text = "منو"
+open.TextSize = 17
+open.TextColor3 = WHITE
+open.BackgroundColor3 = BLUE
+open.Visible = false
+open.Parent = gui
+
+Instance.new("UICorner", open).CornerRadius = UDim.new(0, 10)
+
+close.MouseButton1Click:Connect(function()
+ main.Visible = false
+ open.Visible = true
+end)
+
+open.MouseButton1Click:Connect(function()
+ main.Visible = true
+ open.Visible = false
+end)
+
+-- ساخت دکمه
+local function makeButton(text, y)
+ local b = Instance.new("TextButton")
+ b.Size = UDim2.new(1, -28, 0, 45)
+ b.Position = UDim2.fromOffset(14, y)
+ b.Text = text
+ b.TextSize = 16
+ b.TextColor3 = WHITE
+ b.BackgroundColor3 = BLUE
+ b.Font = Enum.Font.Gotham
+ b.Parent = main
+
+ Instance.new("UICorner", b).CornerRadius = UDim.new(0, 9)
+
+ return b
+end
+
+-- بازیکن
+local playerLabel = Instance.new("TextLabel")
+playerLabel.Size = UDim2.new(1, -28, 0, 30)
+playerLabel.Position = UDim2.fromOffset(14, 65)
+playerLabel.BackgroundTransparency = 1
+playerLabel.Text = "بازیکن: " .. player.Name
+playerLabel.TextColor3 = WHITE
+playerLabel.TextSize = 16
+playerLabel.Parent = main
+
+local playerBox = Instance.new("TextBox")
+playerBox.Size = UDim2.new(1, -28, 0, 40)
+playerBox.Position = UDim2.fromOffset(14, 98)
+playerBox.PlaceholderText = "نام بازیکن"
+playerBox.Text = ""
+playerBox.TextColor3 = WHITE
+playerBox.TextSize = 15
+playerBox.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+playerBox.Parent = main
+
+Instance.new("UICorner", playerBox).CornerRadius = UDim.new(0, 8)
+
+local select = makeButton("انتخاب بازیکن", 146)
+local result = makeButton("بازیکنی انتخاب نشده", 198)
+
+select.MouseButton1Click:Connect(function()
+ local text = playerBox.Text:lower()
+
+ for _, p in ipairs(Players:GetPlayers()) do
+  if p.Name:lower() == text or p.DisplayName:lower() == text then
+   result.Text = "بازیکن: " .. p.Name
+   result.BackgroundColor3 = GREEN
+   return
+  end
+ end
+
+ result.Text = "بازیکن پیدا نشد"
+ result.BackgroundColor3 = BLUE
+end)
+
+-- شوخی
+local joke = makeButton("😂 شوخی", 250)
+
+joke.MouseButton1Click:Connect(function()
+ joke.Text = "😂 انجام شد!"
+ joke.BackgroundColor3 = YELLOW
+
+ task.wait(0.5)
+
+ joke.Text = "😂 شوخی"
+ joke.BackgroundColor3 = BLUE
+end)
+
+-- پرواز
+local fly = makeButton("✈️ پرواز: خاموش", 302)
+
+local flying = false
+local flyVelocity
+
+fly.MouseButton1Click:Connect(function()
+ local char = player.Character
+ local root = char and char:FindFirstChild("HumanoidRootPart")
+
+if not root then
+  return
+ end
+
+ flying = not flying
+
+ if flying then
+  fly.Text = "✈️ پرواز: روشن"
+  fly.BackgroundColor3 = YELLOW
+
+  flyVelocity = Instance.new("BodyVelocity")
+  flyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
+  flyVelocity.Velocity = Vector3.zero
+  flyVelocity.Parent = root
+
+  task.wait(0.4)
+
+  if flying then
+   fly.BackgroundColor3 = GREEN
+  end
+ else
+  fly.Text = "✈️ پرواز: خاموش"
+  fly.BackgroundColor3 = YELLOW
+
+  if flyVelocity then
+   flyVelocity:Destroy()
+   flyVelocity = nil
+  end
+
+  task.wait(0.4)
+
+  fly.BackgroundColor3 = BLUE
+ end
+end)
+
+-- کنترل پرواز
+RunService.RenderStepped:Connect(function()
+ if not flying or not flyVelocity then
+  return
+ end
+
+ local cam = workspace.CurrentCamera
+ local direction = Vector3.zero
+
+ if UIS:IsKeyDown(Enum.KeyCode.W) then
+  direction += cam.CFrame.LookVector
+ end
+
+ if UIS:IsKeyDown(Enum.KeyCode.S) then
+  direction -= cam.CFrame.LookVector
+ end
+
+ if UIS:IsKeyDown(Enum.KeyCode.A) then
+  direction -= cam.CFrame.RightVector
+ end
+
+ if UIS:IsKeyDown(Enum.KeyCode.D) then
+  direction += cam.CFrame.RightVector
+ end
+
+ if UIS:IsKeyDown(Enum.KeyCode.Space) then
+  direction += Vector3.new(0, 1, 0)
+ end
+
+ if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
+  direction -= Vector3.new(0, 1, 0)
+ end
+
+ if direction.Magnitude > 0 then
+  flyVelocity.Velocity = direction.Unit * 50
+ else
+  flyVelocity.Velocity = Vector3.zero
+ end
+end)
+
+-- سرعت
+local speedBox = Instance.new("TextBox")
+speedBox.Size = UDim2.new(1, -28, 0, 40)
+speedBox.Position = UDim2.fromOffset(14, 354)
+speedBox.Text = "16"
+speedBox.PlaceholderText = "سرعت"
+speedBox.TextColor3 = WHITE
+speedBox.TextSize = 15
+speedBox.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+speedBox.Parent = main
+
+Instance.new("UICorner", speedBox).CornerRadius = UDim.new(0, 8)
+
+speedBox.FocusLost:Connect(function()
+ local n = tonumber(speedBox.Text)
+
+ if not n then
+  speedBox.Text = "16"
+  return
+ end
+
+ n = math.clamp(math.floor(n), 1, 100)
+
+ local char = player.Character
+ local hum = char and char:FindFirstChildOfClass("Humanoid")
+
+ if hum then
+  hum.WalkSpeed = n
+ end
+
+ speedBox.Text = tostring(n)
+end)
+
+-- پوسته
+local skins = {
+ {"قرمز", Color3.fromRGB(220, 60, 60)},
+ {"آبی", Color3.fromRGB(60, 130, 255)},
+ {"سبز", Color3.fromRGB(60, 200, 90)},
+ {"بنفش", Color3.fromRGB(160, 80, 220)}
+}
+
+local skinIndex = 0
+local skin = makeButton("🎨 پوسته", 406)
+
+skin.MouseButton1Click:Connect(function()
+ skinIndex += 1
+
+ if skinIndex > #skins then
+  skinIndex = 1
+ end
+
+ skin.BackgroundColor3 = YELLOW
+
+ local char = player.Character
+
+ if char then
+  for _, part in ipairs(char:GetChildren()) do
+   if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+    part.Color = skins[skinIndex][2]
+   end
+  end
+ end
+
+ skin.Text = "🎨 " .. skins[skinIndex][1]
+
+ task.wait(0.4)
+
+ skin.BackgroundColor3 = GREEN
+end)
+
+-- صدای کیبورد
+local keyboard = makeButton("⌨️ صدای کیبورد: خاموش", 458)
+local keyboardOn = false
+
+local sound = Instance.new("Sound")
+sound.Name = "KeyboardSound"
+sound.SoundId = "rbxassetid://9118823102"
+sound.Volume = 0.25
+sound.Looped = true
+sound.Parent = gui
+
+keyboard.MouseButton1Click:Connect(function()
+ keyboardOn = not keyboardOn
+
+ keyboard.BackgroundColor3 = YELLOW
+
+ if keyboardOn then
+  keyboard.Text = "⌨️ صدای کیبورد: روشن"
+  sound:Play()
+
+  task.wait(0.4)
+
+  keyboard.BackgroundColor3 = GREEN
+ else
+  keyboard.Text = "⌨️ صدای کیبورد: خاموش"
+  sound:Stop()
+
+  task.wait(0.4)
+
+  keyboard.BackgroundColor3 = BLUE
+ end
+end)
+
+-- باز و بسته کردن با RightShift
+UIS.InputBegan:Connect(function(input, processed)
+ if processed then
+  return
+ end
+
+ if input.KeyCode == Enum.KeyCode.RightShift then
+  main.Visible = not main.Visible
+  open.Visible = not main.Visible
+ end
+end)
